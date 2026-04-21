@@ -16,7 +16,7 @@
             background-size: cover;
             background-position: center;
             z-index: -1;
-            transition: background-image 0.5s ease-in-out;
+            transition: background-image 0.05s ease-in-out;
             cursor: pointer;
         }
 
@@ -99,7 +99,7 @@
     
     bgLayer.onclick = changeBG;
     changeBG(); // Set first background
-    setInterval(changeBG, 10000); // Auto-change every 10 seconds
+    setInterval(changeBG, 100000); // Auto-change every 10 seconds
 
     // --- WINDOW CONTROLS ---
     const win = document.getElementById('desmos-window');
