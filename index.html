@@ -22,9 +22,9 @@
             background-repeat: no-repeat;
             z-index: -1;
             transition: background-image 0.2s ease-in-out;
+            background-color: #f4f4f4; /* Fallback */
         }
 
-        /* Launcher Icon */
         #calc-launcher {
             position: fixed;
             bottom: 15px;
@@ -42,7 +42,6 @@
         }
         #calc-launcher img { width: 28px; }
 
-        /* Draggable Desmos Window */
         #desmos-window {
             position: absolute;
             top: 50px;
@@ -71,7 +70,6 @@
             border-bottom: 1px solid #ccc;
         }
 
-        /* The Blank Graph Area */
         #graph-area {
             height: 180px;
             background-color: #fff;
@@ -82,7 +80,6 @@
             position: relative;
             border-bottom: 1px solid #ccc;
         }
-        /* Axis lines */
         #graph-area::before {
             content: '';
             position: absolute;
@@ -94,54 +91,21 @@
             left: 50%; top: 0; width: 2px; height: 100%; background: #999;
         }
 
-        /* Message List */
-        #messages {
-            flex: 1;
-            overflow-y: auto;
-            background: #fff;
-        }
+        #messages { flex: 1; overflow-y: auto; background: #fff; }
 
-        .eq-row {
-            display: flex;
-            padding: 8px 10px;
-            border-bottom: 1px solid #f1f1f1;
-            align-items: center;
-        }
+        .eq-row { display: flex; padding: 8px 10px; border-bottom: 1px solid #f1f1f1; align-items: center; }
 
-        /* The colored circle/icon area in Desmos */
         .eq-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid #2d70b3;
-            margin-right: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: #2d70b3;
-            font-weight: bold;
+            width: 24px; height: 24px; border-radius: 50%; border: 2px solid #2d70b3;
+            margin-right: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 10px; color: #2d70b3; font-weight: bold;
         }
 
         .eq-text { font-family: 'Times New Roman', serif; font-size: 15px; flex: 1; }
         .eq-text b { color: #000; margin-right: 5px; }
 
-        /* Input Area */
-        #input-area {
-            padding: 10px;
-            border-top: 1px solid #ccc;
-            display: flex;
-            gap: 5px;
-        }
-
-        #message-input {
-            flex: 1;
-            border: 1px solid #ccc;
-            padding: 8px;
-            font-family: 'Courier New', monospace;
-            outline: none;
-        }
-
+        #input-area { padding: 10px; border-top: 1px solid #ccc; display: flex; gap: 5px; }
+        #message-input { flex: 1; border: 1px solid #ccc; padding: 8px; font-family: 'Courier New', monospace; outline: none; }
         #send-btn { background: #2d70b3; color: white; border: none; padding: 0 12px; cursor: pointer; border-radius: 2px; }
     </style>
 </head>
@@ -160,11 +124,10 @@
     </div>
     
     <div id="graph-area"></div>
-
     <div id="messages"></div>
 
     <div id="input-area">
-        <input type="text" id="message-input" placeholder="y = f(x)">
+        <input type="text" id="message-input" placeholder="Type y = f(x) or /username name">
         <button id="send-btn">Post</button>
     </div>
 </div>
@@ -187,9 +150,11 @@
   const db = getDatabase(app);
   const messagesRef = ref(db, 'messages');
 
-  // Background Cycling Logic
+  // --- BACKGROUND LOGIC ---
   let bgIndex = 1;
   const bgLayer = document.getElementById('bg-layer');
+  
+  // Set initial background
   bgLayer.style.backgroundImage = `url('BG1.png')`;
 
   window.cycleBG = function() {
@@ -197,13 +162,12 @@
     bgLayer.style.backgroundImage = `url('BG${bgIndex}.png')`;
   };
 
-  // Window Logic
+  // --- WINDOW LOGIC ---
   const win = document.getElementById('desmos-window');
   window.toggleChat = function() {
     win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
   };
 
-  // Dragging
   const header = document.getElementById('desmos-header');
   let isDown = false, offset = [0,0];
   header.addEventListener('mousedown', (e) => {
@@ -218,18 +182,38 @@
     }
   });
 
-  // Messaging Logic
+  // --- CHAT & COMMAND LOGIC ---
   const msgInput = document.getElementById('message-input');
   const sendBtn = document.getElementById('send-btn');
   const msgContainer = document.getElementById('messages');
-  const username = "Student" + Math.floor(Math.random() * 99);
+  
+  // Default username
+  let currentUsername = "Student" + Math.floor(Math.random() * 99);
   let count = 0;
 
   function send() {
-    if (msgInput.value.trim()) {
-        push(messagesRef, { u: username, t: msgInput.value, s: serverTimestamp() });
+    const val = msgInput.value.trim();
+    if (!val) return;
+
+    // Check for /username command
+    if (val.startsWith('/username ')) {
+        const newName = val.replace('/username ', '').trim();
+        if (newName) {
+            currentUsername = newName;
+            // Optional: Alert the user or post a local message
+            const systemRow = document.createElement('div');
+            systemRow.className = 'eq-row';
+            systemRow.style.background = "#f9f9f9";
+            systemRow.innerHTML = `<div class="eq-icon" style="border-color: #666; color: #666">i</div><div class="eq-text"><i>Username changed to <b>${currentUsername}</b></i></div>`;
+            msgContainer.appendChild(systemRow);
+        }
         msgInput.value = "";
+        return;
     }
+
+    // Normal message sending
+    push(messagesRef, { u: currentUsername, t: val, s: serverTimestamp() });
+    msgInput.value = "";
   }
 
   onChildAdded(messagesRef, (snap) => {
@@ -239,7 +223,7 @@
     row.className = 'eq-row';
     row.innerHTML = `
         <div class="eq-icon">${count}</div>
-        <div class="eq-text"><b>${data.u}:</b> ${data.t}</div>
+        <div class="eq-text"><b>${data.u || "Unknown"}:</b> ${data.t}</div>
     `;
     msgContainer.appendChild(row);
     msgContainer.scrollTop = msgContainer.scrollHeight;
