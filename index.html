@@ -3,104 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AP Classroom | Unit 1 Chat</title>
+    <title>AP Classroom</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <style>
         :root {
             --cb-blue: #0077c8;
             --cb-dark: #222222;
             --cb-bg: #f5f7f8;
             --cb-border: #d1d1d1;
+            --cb-yellow: #ffbc00;
         }
 
-        body, html { margin: 0; padding: 0; height: 100%; font-family: "Open Sans", Arial, sans-serif; background-color: var(--cb-bg); }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: "Open Sans", Arial, sans-serif; background-color: var(--cb-bg); color: #333; }
 
-        /* Top Nav Bar */
+        /* Top Nav Bar - Ultra Lowkey */
         header {
             background-color: var(--cb-dark);
             color: white;
-            padding: 10px 20px;
+            padding: 8px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            font-size: 13px;
         }
 
-        .logo { font-weight: bold; font-size: 18px; display: flex; align-items: center; gap: 8px; }
-        .logo span { background: var(--cb-blue); padding: 2px 6px; border-radius: 3px; font-size: 12px; }
+        .logo { font-weight: bold; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+        .logo span { background: var(--cb-blue); padding: 1px 5px; border-radius: 2px; font-size: 11px; }
+
+        /* Fake "Alert" Banner - Very AP Classroom */
+        .alert-banner {
+            background-color: var(--cb-yellow);
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
         /* Layout Container */
-        .main-layout { display: flex; height: calc(100vh - 44px); }
+        .main-layout { display: flex; height: calc(100vh - 84px); }
 
-        /* Sidebar - Units Look */
+        /* Sidebar */
         aside {
-            width: 260px;
+            width: 240px;
             background: white;
             border-right: 1px solid var(--cb-border);
             display: flex;
             flex-direction: column;
         }
 
-        .sidebar-header { padding: 20px; font-weight: bold; border-bottom: 1px solid var(--cb-border); }
-        .unit-item { padding: 15px 20px; border-bottom: 1px solid #eee; font-size: 13px; color: #555; cursor: pointer; }
+        .sidebar-header { padding: 15px 20px; font-weight: bold; font-size: 14px; border-bottom: 1px solid var(--cb-border); background: #fafafa; }
+        .unit-item { padding: 12px 20px; border-bottom: 1px solid #f0f0f0; font-size: 12px; color: #666; cursor: pointer; transition: 0.2s; }
+        .unit-item:hover { background: #f9f9f9; }
         .active-unit { border-left: 4px solid var(--cb-blue); background: #f0f7ff; color: var(--cb-blue); font-weight: bold; }
 
-        /* Main Content Area */
-        main { flex: 1; display: flex; flex-direction: column; background: white; margin: 20px; border: 1px solid var(--cb-border); border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow: hidden; }
+        /* Main Content */
+        main { flex: 1; display: flex; flex-direction: column; background: white; margin: 15px; border: 1px solid var(--cb-border); border-radius: 2px; overflow: hidden; }
 
-        #chat-header { padding: 15px 20px; border-bottom: 2px solid var(--cb-bg); font-weight: bold; color: var(--cb-dark); }
+        /* Tab Navigation */
+        .tabs { display: flex; background: #fafafa; border-bottom: 1px solid var(--cb-border); }
+        .tab { padding: 12px 25px; font-size: 13px; font-weight: bold; border-right: 1px solid var(--cb-border); cursor: pointer; color: #666; }
+        .active-tab { background: white; color: var(--cb-blue); border-bottom: 3px solid var(--cb-blue); margin-bottom: -1px; }
 
-        #messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        #messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #fff; }
 
-        /* Message Bubbles */
-        .msg { max-width: 80%; line-height: 1.5; }
-        .msg-user { font-weight: bold; font-size: 12px; color: var(--cb-blue); margin-bottom: 2px; display: block; }
-        .msg-text { background: #f9f9f9; padding: 10px 15px; border-radius: 8px; border: 1px solid #e0e0e0; font-size: 14px; }
-        .sent .msg-text { background: #eef6ff; border-color: #bcd9ff; }
-        .sent { align-self: flex-end; text-align: right; }
-        .sent .msg-user { color: #444; }
-
-        /* Input Area */
-        #input-area { padding: 20px; background: #f9f9f9; border-top: 1px solid var(--cb-border); display: flex; gap: 10px; }
-        input[type="text"] { border: 1px solid var(--cb-border); padding: 10px; border-radius: 4px; font-size: 14px; outline: none; }
-        #username-input { width: 120px; }
+        /* Lowkey Forum Style Messages */
+        .msg { border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; max-width: 100%; }
+        .msg-user { font-weight: bold; font-size: 12px; color: #222; margin-bottom: 4px; display: block; }
+        .msg-text { font-size: 13.5px; color: #444; word-wrap: break-word; line-height: 1.4; }
+        
+        /* Input Area - Integrated */
+        #input-area { padding: 15px; background: white; border-top: 1px solid var(--cb-border); display: flex; gap: 8px; }
+        input { border: 1px solid #ccc; padding: 8px 12px; border-radius: 3px; font-size: 13px; outline: none; }
+        #username-input { width: 100px; color: #777; font-style: italic; }
         #message-input { flex: 1; }
-        button { background: var(--cb-blue); color: white; border: none; padding: 0 25px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        button:hover { background: #005fa0; }
+        button { background: var(--cb-blue); color: white; border: none; padding: 0 20px; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo">College Board <span>AP</span> Classroom</div>
-    <div>My AP | Help | Sign Out</div>
+    <div>Dashboard | Support | Sign Out</div>
 </header>
+
+<div class="alert-banner">
+    <span>⚠️</span> Assigned: Collaborative Unit Review (Unit 1) - Due by 11:59 PM
+</div>
 
 <div class="main-layout">
     <aside>
-        <div class="sidebar-header">Course Content</div>
-        <div class="unit-item active-unit">Unit 1: Real-time Communication</div>
-        <div class="unit-item">Unit 2: Database Structures</div>
-        <div class="unit-item">Unit 3: GitHub Deployment</div>
+        <div class="sidebar-header">Course Resources</div>
+        <div class="unit-item">Unit 1 Overview</div>
+        <div class="unit-item active-unit">Collaborative Discussion</div>
+        <div class="unit-item">Practice Assessment</div>
+        <div class="unit-item">Performance Task</div>
     </aside>
 
     <main>
-        <div id="chat-header">Collaborative Discussion: Unit 1</div>
+        <div class="tabs">
+            <div class="tab">Instructions</div>
+            <div class="tab active-tab">Discussion Forum</div>
+            <div class="tab">Progress</div>
+        </div>
+        
         <div id="messages"></div>
+
         <div id="input-area">
-            <input type="text" id="username-input" placeholder="Your Name" maxlength="15">
-            <input type="text" id="message-input" placeholder="Post a comment to the class...">
-            <button id="send-btn">Post Message</button>
+            <input type="text" id="username-input" placeholder="Name" maxlength="15">
+            <input type="text" id="message-input" placeholder="Type your response for class review...">
+            <button id="send-btn">Post Response</button>
         </div>
     </main>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase, ref, push, onChildAdded, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  import { getDatabase, ref, push, onChildAdded, serverTimestamp, getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBHqNfFZKL0h6m92IbDJU3MuiWnTlb7qPs",
     authDomain: "chat-a8dc8.firebaseapp.com",
+    databaseURL: "https://chat-a8dc8-default-rtdb.firebaseio.com",
     projectId: "chat-a8dc8",
     storageBucket: "chat-a8dc8.firebasestorage.app",
     messagingSenderId: "702869894744",
@@ -116,7 +141,7 @@
   const msgInput = document.getElementById('message-input');
   const sendBtn = document.getElementById('send-btn');
 
-  userInput.value = "Student_" + Math.floor(Math.random() * 99);
+  userInput.value = "Student" + Math.floor(Math.random() * 999);
 
   function sendMessage() {
     const text = msgInput.value.trim();
@@ -133,11 +158,10 @@
   onChildAdded(messagesRef, (data) => {
     const msg = data.val();
     const msgDiv = document.createElement('div');
-    const isMe = msg.username === userInput.value;
+    msgDiv.className = 'msg';
     
-    msgDiv.className = `msg ${isMe ? 'sent' : 'received'}`;
     msgDiv.innerHTML = `
-        <span class="msg-user">${msg.username}</span>
+        <span class="msg-user">${msg.username}:</span>
         <div class="msg-text">${msg.text}</div>
     `;
     
